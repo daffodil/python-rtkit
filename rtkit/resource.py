@@ -13,11 +13,13 @@ class RTObj:
             self.__dict__ =  dic
         
     def keys(self):
-        """:return: A list of the field names"""
+        """:return: A list with strings of the field names"""
         return sorted(self.__dict__.keys())
     
     def get(self, name):
-        """Return a value"""
+        """Return a value, This is sometimes necessary for non "ooable" names
+           eg ob.get("X-yx");
+        :returns: The value of name."""
         return self.__dict__[name]
     
     def as_dict(self):
