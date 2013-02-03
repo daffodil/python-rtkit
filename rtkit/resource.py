@@ -6,9 +6,33 @@ from rtkit.parser import RTParser
 
 class RTObj:
     """RT Simple Object Container
+    
+    .. doctest::
+    
+        resource = RTResource('http://rt.example.com/REST/1.0/', 'webmaster', 'secret', CookieAuthenticator)
+        try:
+            response = resource.get(path='ticket/28')
+            myTicket = response.as_object()
+            
+        except RTResourceError as e:
+            logger.error(e.response.status_int)
+            logger.error(e.response.status)
+            logger.error(e.response.parsed)
+
+        ## Show Stuff
+        print myTicket.Subject, myTicket.id
+        print myTicket.get_custom("my_custom")
+        print myTicket.keys()  # list of keys
+        print mtTicket.as_dict() # return as dict and key/value pair
+
+        ## Update Stuff
+        myTicket.set_custom("my_custom", "New Val")
+        myTicker.Subject = myTicket.Subject + " my Xtra"
     """
     
     def __init__(self ,dic=None):
+        """
+        :param dic; The dictionary to make Oo"""
         if dic:
             self.__dict__ =  dic
         
@@ -17,20 +41,32 @@ class RTObj:
         return sorted(self.__dict__.keys())
     
     def get(self, name):
-        """Return a value, This is sometimes necessary for non "ooable" names
-           eg ob.get("X-yx");
-        :returns: The value of name."""
+        """This is useful as some "keys" are not ooable eg ob.get("X-yx");
+           
+        :param name: The value to get
+        :return: The value of name."""
         return self.__dict__[name]
     
     def as_dict(self):
+        """
+        :return: Dictionary of data as key value pairs"""
         return self.__dict__
 
 
     def get_custom(self, name):
-        """:param: name of custom var eg Works Order' """
+        """Get a custom field, a short cut to CF.{name}
+
+        :param name: of custom field eg 'Works Order' 
+        :return: the data as string 
+        """
         return self.__dict__["CF.{%s}" % name]
 
     def set_custom(self, name, val):
+        """Set a custom field, a short cut to CF.{name}
+
+        :param name: of custom field eg 'Works Order' 
+        :param val: New value to set to
+        """
         self.__dict__["CF.{%s}" % name] = val
         
     def __repr__(self):
