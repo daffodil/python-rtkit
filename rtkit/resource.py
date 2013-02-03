@@ -5,14 +5,20 @@ from urllib2 import Request, HTTPError
 from rtkit.parser import RTParser
 
 class RTObj:
-    """RT Simple Object Container
+    """RT Simple Object Container. This is a quick hack to make the data returned slightly oo with some helpers.    
+    
+    :param dic: The dictionary to make Oo
     
     .. doctest::
+    
+        mydata = {'Foo': 'Var'}
+        myObj = RTObj(mydata)
+        print myObj.Foo
     
         resource = RTResource('http://rt.example.com/REST/1.0/', 'webmaster', 'secret', CookieAuthenticator)
         try:
             response = resource.get(path='ticket/28')
-            myTicket = response.as_object()
+            myTicket = response.as_object() ## Returns an RtObj instance
             
         except RTResourceError as e:
             logger.error(e.response.status_int)
@@ -31,8 +37,6 @@ class RTObj:
     """
     
     def __init__(self ,dic=None):
-        """
-        :param dic; The dictionary to make Oo"""
         if dic:
             self.__dict__ =  dic
         
@@ -168,7 +172,7 @@ class RTResponse(object):
         return d
         
     def as_object(self):
-        """:return: A :py:class:`rtkit.resource.RtObj` with data as attributes"""
+        """:return: A :py:class:`rtkit.resource.RTObj` object instance """
         ob = RTObj(self.as_dict())
         return ob
         
