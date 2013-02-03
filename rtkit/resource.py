@@ -4,6 +4,35 @@ import forms
 from urllib2 import Request, HTTPError
 from rtkit.parser import RTParser
 
+class RTObj:
+    """RT Simple Object Container
+    """
+    
+    def __init__(self ,dic=None):
+        if dic:
+            self.__dict__ =  dic
+        
+    def keys(self):
+        """:return: A list of the field names"""
+        return sorted(self.__dict__.keys())
+    
+    def get(self, name):
+        """Return a value"""
+        return self.__dict__[name]
+    
+    def as_dict(self):
+        return self.__dict__
+
+
+    def get_custom(self, name):
+        """:param: name of custom var eg Works Order' """
+        return self.__dict__["CF.{%s}" % name]
+
+    def set_custom(self, name, val):
+        self.__dict__["CF.{%s}" % name] = val
+        
+    def __repr__(self):
+        return '<RtObj %s>' % (self.id)
 
 class RTResource(object):
     """REST Resource Object"""
@@ -92,3 +121,16 @@ class RTResponse(object):
             self.status = '{0} {1}'.format(e.status_int, e.msg)
         self.logger.debug('RESOURCE_STATUS: {0}'.format(self.status))
         self.logger.info(self.parsed)
+
+    def as_dict(self):
+        """:return: dict with the data"""
+        d = {}
+        for p in self.parsed[0]:
+            d[p[0]] = p[1]
+        return d
+        
+    def as_object(self):
+        """:return: A :py:class:`rtkit.resource.RtObj` with data as attributes"""
+        ob = RTObj(self.as_dict())
+        return ob
+        
